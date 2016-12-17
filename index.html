@@ -30,13 +30,13 @@
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3infBvJeAdiM6KqqBTS0i5jCnzIDWp8o&callback=initMap" type="text/javascript"></script>
 <script>
 
-var signal = [
-	{
-	lat: 35.8809431, lng: 136.3324298, img: "photo/IMG_7949.JPG", description: "国道417号線上、横断歩道なし"
-	}, {
-	lat: 35.8858721, lng: 136.3421958, img: "photo/IMG_7937.JPG", description: "こどもの練習用、通常時点滅、押しボタンあり、国道476号線x県道117号線",
-	}
-];
+/* GPSの位置情報の変数  */  
+var gPos = null;
+/* 画面に表示するスポットの配列  */
+var visibleSpot = [];   
+
+/* スポットサーチの範囲（km）*/
+var searchRange = 0.2;
 
 var getUqueryToType = function(){
 
@@ -87,16 +87,7 @@ var getTypeToUquery = function(type) {
     return "err";
 };
 
-/* 信号機専用 */
-var setSignals = function(){
-      
-   for(i=0; i<signal.length;i++){
-       setMarker(signal[i].description,signal[i].lat,signal[i].lng,{url:"../img/icon-signal.png",
-       scaledSize : new google.maps.Size(48, 18)});
-    }
-      
-};
-	       
+       
 $(document).ready(function(){
 
     var baseurl = "https://sparql.odp.jig.jp/data/sparql";
@@ -108,8 +99,12 @@ $(document).ready(function(){
     var type = "http://odp.jig.jp/odp/1.0#TourSpot";
     var uQuery = "ts";
 
+    /*GPSの現在地取得*/
+    setGeoLocation();				   
 
     var url = querySPARQL(baseurl, setQuery(type, uQuery), "?");
+    var sd = 0.0;
+    var tempdd = visibleSpot.concat();
 
    $.getJSON(url,function(data){
 
@@ -128,19 +123,37 @@ $(document).ready(function(){
 //          alert(dd.type)
 
      var img = setIconImage(getUqueryToType());
-				   
-/*     if(uQuery == "ts")				   
-         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
-     else if(uQuery == "vm") //自販機だけlabelがlocation
-         setMarker(dd.location, dd.lat,dd.lng,img);
-     else
-         setMarker(dd.label, dd.lat,dd.lng,img);
-*/				   
-      }
+
+     sd =  getDistance(gPos.coords.latitude,gPos.coords.longitude,dd.lat,dd.lng);		
+
+     if(sd < searchRange ){
+         //console.log(sd);
+	 dd["range"] = sd;    
+         console.log(dd);
+         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);				   	     
+/*
+        if(tempdd.length == 0){
+           visibleSpot.push(dd);
+           setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);				   	     
+	 } else{
+
+	   for(var n in tempdd){
+
+             if(n.name == dd.name){
+                break;
+	     }	      
+           }
+	     
+ 	 }     
+*/
+
+     }
+   }
 
    });
-  //  setSignals();
-    setGeoLocation();				   
+
+	     
+    /*GoogleMapに表示するマーカーの処理*/				   
     getCSV();  // 生口島美術館展示物の位置情報を取得
 				   
 });
@@ -298,15 +311,16 @@ var setQuery = function(type, urlquery){
 }
 
 var setGeoLocation = function(){
-
  if (navigator.geolocation) {
-//     navigator.geolocation.getCurrentPosition(
        navigator.geolocation.watchPosition(			   
 	function(pos) {
          
 	setGeoMarker(pos.coords.accuracy,pos.coords.latitude,pos.coords.longitude);
-	//alert("現在地：緯度"+lat+" 経度："+lng);		   
-	   },
+        //alert("現在地：緯度"+lat+" 経度："+lng);
+
+         gPos = pos;
+
+       },
 	function(err) {
 		var errmes = [ "", "許可されてません", "判定できません", "タイムアウト" ];
 		console.log(errmes[err]);
@@ -320,8 +334,20 @@ var setGeoLocation = function(){
 	);
 	} else {
 		ignoreGPS();
-	}
-}
+   }
+};
+
+/* ２地点館の距離計算  */	     
+var getDistance = function(lat1, lng1, lat2, lng2) {
+	var dlat = (lat2 - lat1) * Math.PI / 180;
+	var dlng = (lng2 - lng1) * Math.PI / 180;
+	var a = Math.sin(dlat / 2) * Math.sin(dlat / 2)
+		+ Math.cos(lat1 * Math.PI / 180)
+		* Math.cos(lat2 * Math.PI / 180)
+		* Math.sin(dlng / 2) * Math.sin(dlng / 2);
+	return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 6371; // 6371 = R of the Earth in km
+};
+
 				   
 var setIconImage = function(type){
 
@@ -348,7 +374,8 @@ var setIconImage = function(type){
 	if (type == "http://purl.org/jrrk#PublicToilet")
                return {
  		   url: "../img/icon-wc.png",
-                   scaledSize : new google.maps.Size(32, 32)
+
+				   scaledSize : new google.maps.Size(32, 32)
                 }
 	if (type == "http://purl.org/jrrk#AED")
                return {
@@ -362,8 +389,6 @@ var setIconImage = function(type){
                 }
         return "http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png";
 }				   
-
-
 </script> 
 </body>
 </html>

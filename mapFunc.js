@@ -75,25 +75,36 @@ function setMarker(label,lat, lng, img){
     });
 
 }
+
+var gpsMarker = null;
+
 /*GPSの位置表示*/
 function setGeoMarker(r, lat, lng){
 
-    var latlng = new google.maps.LatLng(lat,lng);
-    var image = {
-	url:"img/group.jpg",
-	scaledSize : new google.maps.Size(32, 32)
-    }
-    var marker = new google.maps.Marker({
+    if(gpsMaker == null){
+    
+       var latlng = new google.maps.LatLng(lat,lng);
+       var image = {
+         url:"img/group.jpg",
+	 scaledSize : new google.maps.Size(32, 32)
+       }
+
+　　　gpsMarker = new google.maps.Marker({
 	position: latlng,
 	map: map,
 	icon:image
-    });
+    　});
+    } else{
+       /* GPSの位置更新  */
+	gpsMaker.setPosition(new google.maps.LatLng(lat,lng));
+    }
     
-    google.maps.event.addListener(marker,'mouseover',function(){
-        infoWindow.open(map, marker);
+    
+    google.maps.event.addListener(gpsMarker,'mouseover',function(){
+        infoWindow.open(map, gpsMarker);
     });
 
-    google.maps.event.addListener(marker,'mouseout',function(){
+    google.maps.event.addListener(gpsMarker,'mouseout',function(){
 	infoWindow.close();
     });
 
