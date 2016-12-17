@@ -1,0 +1,357 @@
+<!DOCTlYPE html>
+<html>
+  <head>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8"/ >
+  <title>尾道市公共クラウドマップ</title>
+  </head>
+  <body style="background:#fff" >
+  <div style="padding:0px 0px 0px 8px;display:block;border-color:#cdcdcd;border-style:ridge;border-width:1">  
+<!--  <a href=../index.html style="color:#e13b84;font-size:80%;padding:4px 0px 4px 2px;display:block">&lt;&lt; WithKidsへ戻る</a> -->
+  <p style="font-weight:bold;font-size:120%;color:#e13b84">尾道市観光スポット</p>
+  <tr>
+    <th><img border="0" src="http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png" width="32" height="32" onclick="setTypeID('ts')"></th>
+<!--    <th><img border="0" src="../img/signal.png" width="36" height="12" align="center" valign="center" onclick="setTypeID('sg')"></th> -->
+  </tr>
+  </div>
+<div id="map" style="width:100%; height:100%; display:block"></div>
+  <script type="text/javascript" src="mapFunc.js"></script>
+  <script type="text/javascript" src="myFuncSet.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script type="application/javascript"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3infBvJeAdiM6KqqBTS0i5jCnzIDWp8o&callback=initMap" type="text/javascript"></script>
+<script>
+
+var signal = [
+	{
+	lat: 35.8809431, lng: 136.3324298, img: "photo/IMG_7949.JPG", description: "国道417号線上、横断歩道なし"
+	}, {
+	lat: 35.8858721, lng: 136.3421958, img: "photo/IMG_7937.JPG", description: "こどもの練習用、通常時点滅、押しボタンあり、国道476号線x県道117号線",
+	}
+];
+
+var getUqueryToType = function(){
+
+  if(getUrlQuery() == "ts")
+     return "http://odp.jig.jp/odp/1.0#TourSpot";
+  if(getUrlQuery() == "vm")
+     return "http://odp.jig.jp/odp/1.0#VendingMachine";
+  if(getUrlQuery() == "gs")
+     return "http://odp.jig.jp/odp/1.0#ServiceStation";
+  if(getUrlQuery() == "bs")
+     return "http://purl.org/jrrk#BusStop";
+  if(getUrlQuery() == "ef")
+     return "http://purl.org/jrrk#EmergencyFacility";
+  if(getUrlQuery() == "wc")
+     return "http://purl.org/jrrk#PublicToilet";
+  if(getUrlQuery() == "aed")
+     return "http://purl.org/jrrk#AED";
+  if(getUrlQuery() == "wifi")
+     return "http://purl.org/jrrk#PublicWIFI";
+  if(getUrlQuery() == "sg")
+     return "signal"
+  else
+     return "http://odp.jig.jp/odp/1.0#VendingMachine";
+};
+
+
+var getTypeToUquery = function(type) {
+
+  if (type == "http://odp.jig.jp/odp/1.0#TourSpot")
+    return "ts";
+  if (type == "http://odp.jig.jp/odp/1.0#VendingMachine")
+    return "vm";
+  if (type == "http://odp.jig.jp/odp/1.0#ServiceStation")
+    return "gs";
+  if (type == "http://purl.org/jrrk#BusStop")
+    return "bs";
+  if (type == "http://purl.org/jrrk#EmergencyFacility")
+    return "ef";
+  if (type == "http://purl.org/jrrk#PublicToilet")
+    return "wc";
+  if (type == "http://purl.org/jrrk#AED")
+    return "aed";
+  if (type == "http://purl.org/jrrk#PublicWIFI")
+    return "wifi"		   
+  if (type == "signal")
+    return "sg"		   
+  else
+    return "err";
+};
+
+/* 信号機専用 */
+var setSignals = function(){
+      
+   for(i=0; i<signal.length;i++){
+       setMarker(signal[i].description,signal[i].lat,signal[i].lng,{url:"../img/icon-signal.png",
+       scaledSize : new google.maps.Size(48, 18)});
+    }
+      
+};
+	       
+$(document).ready(function(){
+
+    var baseurl = "https://sparql.odp.jig.jp/data/sparql";
+
+//    var type = getUqueryToType();
+//    var uQuery = getTypeToUquery(type);
+//    alert(type+"  "+uQuery);
+
+    var type = "http://odp.jig.jp/odp/1.0#TourSpot";
+    var uQuery = "ts";
+
+
+    var url = querySPARQL(baseurl, setQuery(type, uQuery), "?");
+
+   $.getJSON(url,function(data){
+
+     var  items = data.results.bindings;
+//     alert(items.length);
+
+          for(i=0; i<items.length; i++){
+
+	       var temp = items[i];
+               var dd =[]   
+
+	       for(var n in temp){
+                   dd[n] = temp[n].value; 
+	       }
+//	  console.log(dd)
+//          alert(dd.type)
+
+     var img = setIconImage(getUqueryToType());
+				   
+     if(uQuery == "ts")				   
+         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
+     else if(uQuery == "vm") //自販機だけlabelがlocation
+         setMarker(dd.location, dd.lat,dd.lng,img);
+     else
+         setMarker(dd.label, dd.lat,dd.lng,img);			   				   
+      }
+
+   });
+  //  setSignals();
+    setGeoLocation();				   
+				   
+});
+
+var setQuery = function(type, urlquery){
+
+// var type = getUqueryToType();
+// var urlquery = getTypeToUquery(type);		    
+//alert(type+"  "+urlquery);
+		    
+ if(urlquery == "?type"){
+
+    var q = "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+            "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+	    "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+	   "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+           "prefix address<http://purl.org/jrrk#>\n"+				          "select ?s ?location ?label ?lat ?lng ?desc {\n" + 
+	          "?s rdf:type " + type + ";\n" +
+	          "odp:location ?location;\n" +
+               	  "rdfs:label ?label;\n" +
+		  "address:adress ?address;\n"+
+                  "geo:lat ?lat;\n" +
+	          "geo:long ?lng.\n" +
+         	  "optional { ?s <http://schema.org/description> ?desc }\n" +
+                  "filter(?type=<http://odp.jig.jp/odp/1.0#TourSpot> || ?type=<http://purl.org/jrrk#CivicPOI> || ?type=<http://odp.jig.jp/odp/1.0#VendingMachine> || ?type=<http://odp.jig.jp/odp/1.0#ServiceStation> || ?type=<http://purl.org/jrrk#BusStop> || ?type=<http://purl.org/jrrk#PublicToilet> || ?type=<http://purl.org/jrrk#AED>)\n"+
+                  "filter(regex(?address, '福井県今立郡池田町'))\n"+
+		"} limit 100";
+ 
+ }
+				   
+ if(urlquery == "ts"){
+
+     var q = "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+	     "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+	     "prefix jrrk: <http://purl.org/jrrk#>\n" +
+	     "select ?s ?name ?lat ?lng ?desc ?link ?img{\n" + 
+             "graph ?graph {\n" + 
+		  "?s rdf:type <" + type + ">;\n" +
+         	  "rdfs:label ?name;\n" +
+		  "geo:lat ?lat;\n" +
+		  "geo:long ?lng.\n" +
+		  "optional { ?s <http://schema.org/description> ?desc }\n" +
+		  "optional { ?s <http://schema.org/url> ?link }\n" +
+		  "optional { ?s <http://schema.org/image> ?img}\n" +
+		  "filter(lang(?name) = 'ja')\n" +
+		   "}\n" +
+                   "}";
+		      
+ }
+
+ if(urlquery == "vm"){
+
+     var q = "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+             "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+  	     "select ?s ?location ?lat ?lng ?desc {\n" + 
+	          "?s rdf:type <" + type + ">;\n" +
+	          "odp:location ?location;\n" +
+		  "geo:lat ?lat;\n" +
+		  "geo:long ?lng.\n" +
+		  "optional { ?s <http://schema.org/description> ?desc }\n" +
+		"}";
+
+ }
+ if(urlquery == "gs"){
+
+    var q =  "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+             "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+             "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+  	     "select ?s ?label ?lat ?lng {\n" + 
+	          "?s rdf:type <" + type + ">;\n" +
+	          "rdfs:label ?label;\n" +
+		  "geo:lat ?lat;\n" +
+		  "geo:long ?lng.\n" +
+		"}";
+}
+ if(urlquery == "bs"){
+
+    var q =  "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+             "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+             "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+  	     "select ?s ?label ?lat ?lng {\n" + 
+	          "?s rdf:type <" + type + ">;\n" +
+	          "rdfs:label ?label;\n" +
+		  "geo:lat ?lat;\n" +
+		  "geo:long ?lng.\n" +
+		"}";
+ }
+ if(urlquery == "ef"){
+
+    var q =  "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+             "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+             "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+             "prefix address: <http://purl.org/jrrk#>\n" +		   
+  	     "select ?s ?label ?lat ?lng ?address{\n" + 
+	          "?s rdf:type <" + type + ">;\n" +
+	          "rdfs:label ?label;\n" +
+		  "geo:lat ?lat;\n" +
+                  "geo:long ?lng;\n" +
+	          "address:address ?address.\n" +			   
+		"filter(regex(?address, '福井県今立郡池田町'))} limit 100";
+ }
+ if(urlquery == "wc"){
+
+    var q =  "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+             "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+             "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+             "prefix address: <http://purl.org/jrrk#>\n" +		   
+  	     "select ?s ?label ?lat ?lng {\n" + 
+	          "?s rdf:type <" + type + ">;\n" +
+	          "rdfs:label ?label;\n" +
+		  "geo:lat ?lat;\n" +
+		  "geo:long ?lng;\n" +
+		  "}";		   
+ }
+				   
+ if(urlquery == "aed"){
+
+    var q =  "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+             "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+             "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+             "prefix address: <http://purl.org/jrrk#>\n" +		   				   
+  	     "select ?s ?label ?lat ?lng ?address{\n" + 
+	          "?s rdf:type <" + type + ">;\n" +
+	          "rdfs:label ?label;\n" +
+		  "geo:lat ?lat;\n" +
+		  "geo:long ?lng;\n" +
+                  "address:address ?address.\n" +			   
+		"filter(regex(?address, '福井県今立郡池田町'))} limit 100";
+
+  }
+ if(urlquery == "wifi"){
+
+    var q =  "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+             "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+             "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
+             "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
+             "prefix address: <http://purl.org/jrrk#>\n" +		   
+             "select ?s ?label ?lat ?lng ?address{\n" + 
+	          "?s rdf:type <" + type + ">;\n" +
+	          "rdfs:label ?label;\n" +
+		  "geo:lat ?lat;\n" +
+		  "geo:long ?lng;\n" +
+                  "}";
+}
+				   
+//  alert(q); 
+  return q;				   
+}
+
+var setGeoLocation = function(){
+
+ if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(
+       navigator.geolocation.watchPosition(			   
+	function(pos) {
+         
+	setGeoMarker(pos.coords.accuracy,pos.coords.latitude,pos.coords.longitude);
+	//alert("現在地：緯度"+lat+" 経度："+lng);		   
+	   },
+	function(err) {
+		var errmes = [ "", "許可されてません", "判定できません", "タイムアウト" ];
+		console.log(errmes[err]);
+		ignoreGPS();
+          },
+	  {
+		enableHighAccuracy: true,
+		timeout: 10000, // タイムアウト10秒
+		maximumAge: 0 // nmsec前のデータを使う、0でキャッシュしない
+	   }
+	);
+	} else {
+		ignoreGPS();
+	}
+}
+				   
+var setIconImage = function(type){
+
+	if (type == "http://odp.jig.jp/odp/1.0#VendingMachine")
+               return {
+ 		   url:"../img/icon-vmachine.png",
+                   scaledSize : new google.maps.Size(28, 38)
+                }
+	if (type == "http://odp.jig.jp/odp/1.0#ServiceStation")
+               return {
+ 		   url:"../img/icon-gs.png",
+                   scaledSize : new google.maps.Size(31, 38)
+                }
+	if (type == "http://purl.org/jrrk#BusStop")
+               return {
+ 		   url:"http://maps.google.com/mapfiles/ms/micons/bus.png",
+                   scaledSize : new google.maps.Size(32, 32)
+                }
+	if (type == "http://purl.org/jrrk#EmergencyFacility")
+               return {
+ 		   url: "img/emergency.png",
+                   scaledSize : new google.maps.Size(32, 32)
+                }
+	if (type == "http://purl.org/jrrk#PublicToilet")
+               return {
+ 		   url: "../img/icon-wc.png",
+                   scaledSize : new google.maps.Size(32, 32)
+                }
+	if (type == "http://purl.org/jrrk#AED")
+               return {
+ 		   url: "img/aed.png",
+                   scaledSize : new google.maps.Size(32, 32)
+                }
+  	if (type == "http://purl.org/jrrk#PublicWIFI")
+               return {
+ 		   url: "img/wifi.png",
+                   scaledSize : new google.maps.Size(32, 32)
+                }
+        return "http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png";
+}				   
+</script> 
+</body>
+</html>
