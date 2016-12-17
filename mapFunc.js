@@ -8,7 +8,7 @@
 function initMap(){
 
     var mapId ={
-	zoom: 10,
+	zoom: 13,
 	center: new google.maps.LatLng(34.292832,133.106863)
     };
 
