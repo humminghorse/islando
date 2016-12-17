@@ -96,7 +96,7 @@ function setGeoMarker(r, lat, lng){
     　});
     } else{
        /* GPSの位置更新  */
-	gpsMaker.setPosition(new google.maps.LatLng(lat,lng));
+	gpsMarker.setPosition(new google.maps.LatLng(lat,lng));
     }
     
     
