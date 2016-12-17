@@ -140,4 +140,7 @@ function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列と�
         setMarker(result[i][1],result[i][2],result[i][3],"http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png");
     } 
     // alert(result[1][2]); 
+
+    var vibrate = navigator.vibrate || navigator.mozVibrate;
+    navigator.vibrate(1000);
 }
