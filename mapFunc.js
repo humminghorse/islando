@@ -141,6 +141,24 @@ function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列と�
     } 
     // alert(result[1][2]); 
 
-    var vibrate = navigator.vibrate || navigator.mozVibrate;
-    navigator.vibrate(1000);
+    goVibrate(300);
+    
 }
+
+function goVibrate(dist) {
+    var vibrate = navigator.vibrate || navigator.mozVibrate;
+
+    if (dist >= 500) {
+        return;
+    }
+    if (dist < 100) {
+        navigator.vibrate(5000);
+    } else if (dist < 300) {
+        navigator.vibrate(3000);
+    } else if (dist < 500) {
+        navigator.vibrate(1000);
+    }
+}
+
+
+
