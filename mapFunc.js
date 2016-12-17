@@ -117,7 +117,7 @@ function setGeoMarker(r, lat, lng){
 
 function getCSV(){
     var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
-    req.open("get", ".\data\art.csv", false); // アクセスするファイルを指定
+    req.open("get", "./data/art.csv", true); // アクセスするファイルを指定
     req.send(null); // HTTPリクエストの発行
 	
     // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ	
