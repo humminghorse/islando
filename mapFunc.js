@@ -3,11 +3,13 @@
 
 //var onomichiLatLng = new google.maps.LatLng(34.404839,133.193653);
 
+//生口島　34.292832,133.106863
+
 function initMap(){
 
     var mapId ={
-	zoom: 13,
-	center: new google.maps.LatLng(34.404839,133.193653)
+	zoom: 10,
+	center: new google.maps.LatLng(34.292832,133.106863)
     };
 
     map = new google.maps.Map(document.getElementById("map"),mapId);
