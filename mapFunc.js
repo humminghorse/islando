@@ -141,7 +141,7 @@ function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列と�
     } 
     // alert(result[1][2]); 
 
-    goVibrate(300);
+    goVibrate(299);
     
 }
 
