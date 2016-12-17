@@ -135,6 +135,9 @@ function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列と�
     for(var i=0;i<tmp.length;++i){
         result[i] = tmp[i].split(',');
     }
- 
-    alert(result[1][2]); 
+    var img = setIconImage(getUqueryToType());
+    for(var i=0;i<tmp.length;++i){
+        setMarker(result[i][1],result[i][2],result[i][3],img);
+    } 
+    // alert(result[1][2]); 
 }
