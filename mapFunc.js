@@ -152,9 +152,9 @@ function goVibrate(dist) {
         return;
     }
     if (dist < 100) {
-        navigator.vibrate(5000);
+        navigator.vibrate([1000,100,1000,10,1000,10,1000,10,1000]);
     } else if (dist < 300) {
-        navigator.vibrate(3000);
+        navigator.vibrate([1000,100,1000,10,1000]);
     } else if (dist < 500) {
         navigator.vibrate(1000);
     }
