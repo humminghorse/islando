@@ -244,89 +244,89 @@ function setIconImageArt(no){
 
 	if (no == "1")
                return {
- 		   url:"../img/1.png",
-                   scaledSize : new google.maps.Size(28, 38)
+ 		   url:"img/1.png",
+                   scaledSize : new google.maps.Size(28, 28)
                 }
 	if (no == "2")
                return {
- 		   url:"../img/2.png",
-                   scaledSize : new google.maps.Size(31, 38)
+ 		   url:"img/2.png",
+                   scaledSize : new google.maps.Size(28, 28)
                 }
 	if (no == "3")
                return {
- 		   url:"../img/3.png",
-                   scaledSize : new google.maps.Size(32, 32)
+ 		   url:"img/3.png",
+                   scaledSize : new google.maps.Size(28, 28)
                 }
 	if (no == "4")
                return {
  		   url: "img/4.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
 	if (no == "5")
                return {
- 		   url: "../img/5.png",
+ 		   url: "img/5.png",
 
-				   scaledSize : new google.maps.Size(32, 32)
+				   scaledSize : new google.maps.Size(28, 28)
                 }
 	if (no == "6")
                return {
  		   url: "img/6.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "7")
                return {
  		   url: "img/7.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "8")
                return {
  		   url: "img/8.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "9")
                return {
  		   url: "img/9.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "10")
                return {
  		   url: "img/10.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "11")
                return {
  		   url: "img/11.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "12")
                return {
  		   url: "img/12.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "13")
                return {
  		   url: "img/13.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "14")
                return {
  		   url: "img/14.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "15")
                return {
  		   url: "img/15.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "16")
                return {
  		   url: "img/16.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
   	if (no == "17")
                return {
  		   url: "img/17.png",
-                   scaledSize : new google.maps.Size(32, 32)
+                   scaledSize : new google.maps.Size(28, 28)
                 }
         return "http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png";
 }
