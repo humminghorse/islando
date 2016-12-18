@@ -9,10 +9,31 @@ function initMap(){
 
     var mapId ={
 	zoom: 12,
-	center: new google.maps.LatLng(34.292832,133.106863)
+	center: new google.maps.LatLng(34.292832,133.106863),
+        mapTypeControlOptions: {
+           mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+        }   
     };
 
     map = new google.maps.Map(document.getElementById("map"),mapId);
+
+  var styleOptions = [
+  {
+  "stylers": [
+      { "weight": 3.1 },
+      { "saturation": 42 },
+      { "lightness": 23 },
+      { "hue": "#ffcc00" },
+      { "gamma": 0.84 }
+      ]
+    }
+  ]
+
+    
+  var styledMapOptions = { name: 'つっきー' }
+  var sampleType = new google.maps.StyledMapType(styleOptions, styledMapOptions);
+  map.mapTypes.set('map_style', sampleType);
+  map.setMapTypeId('map_style');
 }
 
 /*公共クラウドの全国データ*/
