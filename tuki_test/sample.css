@@ -1,0 +1,56 @@
+
+/*見出し*/
+h1{
+  text-align: center;
+}
+.logo{
+  width: 100%;
+  height: auto;
+}
+/*四角く囲みます*/
+.tabrow {
+    text-align: left;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    line-height: 24px;
+}
+.tabrow li {
+    margin: 0 3px;
+    padding: 0 10px;
+    border: 1px solid #AAA;
+    background: #E0FFF1;
+    display: inline-block;
+
+    border-radius: 50px 50px 0 0; /*角を丸く*/
+}
+/*calss が　selectedのバックカラーを変えました*/
+.tabrow li.selected {
+    background: #17CAB6;
+    color: #000;
+}
+/*下に線入れました*/
+.tabrow {
+    position: relative;
+}
+.tabrow:after {
+    position: absolute;
+    content: "";
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    border-bottom: 1px solid #AAA;
+    z-index: 1;
+}
+/*選択されたタブの下線はいらぬ！*/
+.tabrow:before {
+    z-index: 1;
+}
+.tabrow li {
+    position: relative;
+    z-index: 0;
+}
+.tabrow li.selected {
+    z-index: 2;
+    border-bottom-color: #FFF;
+}
