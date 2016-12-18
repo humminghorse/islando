@@ -190,6 +190,8 @@ function getCSV_underground(){
     req2.open("get", "./data/underground.csv", true); // アクセスするファイルを指定
     req2.send(null); // HTTPリクエストの発行
 
+    alert("underground,"); 
+    
     // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ   
     req2.onload = function(){
     convertCSVtoArray2(req2.responseText); // 渡されるのは読み込んだCSVデータ
@@ -204,7 +206,7 @@ function convertCSVtoArray2(str){ // 読み込んだCSVデータが文字列と�
     // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
     for(var i=0;i<tmp2.length;++i){
         result2[i] = tmp2[i].split(',');
-//        console.log(result2);
+        console.log(result2);
     }
 
     for(var i=0;i<tmp2.length;++i){
