@@ -126,33 +126,54 @@ function setGeoMarker(r, lat, lng){
 */
 }
 
-function getCSV(){
+var dist1sw = 0;
+var dist2sw = 0;
+var dist3sw = 0;
+var spot = 0;
+
+function getCSV(gPos){
     var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
     req.open("get", "./data/art.csv", true); // アクセスするファイルを指定
     req.send(null); // HTTPリクエストの発行
 	
     // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ	
     req.onload = function(){
-	convertCSVtoArray(req.responseText); // 渡されるのは読み込んだCSVデータ
+	convertCSVtoArray(req.responseText,gPos); // 渡されるのは読み込んだCSVデータ
     }
 }
 
 // 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
-function convertCSVtoArray(str){ // 読み込んだCSVデータが文字列として渡される
+function convertCSVtoArray(str,pos){ // 読み込んだCSVデータが文字列として渡される
     var result = []; // 最終的な二次元配列を入れるための配列
     var tmp = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
+    var dist = 500;
+    var tmpdist;
+    var tmpspot;
  
     // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
     for(var i=0;i<tmp.length;++i){
         result[i] = tmp[i].split(',');
     }
+
     var img = setIconImage(getUqueryToType());
     for(var i=0;i<tmp.length;++i){
         setMarker(result[i][1],result[i][2],result[i][3],"http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png");
-    } 
-    // alert(result[1][2]); 
+        tmpdist = getDistance(pos.coords.latitude,pos.coords.longitude,esult[i][2],result[i][3])
+        if (tmpdist < dist) {
+            tmpspot = result[i][0];
+            dist = tmpdist;
+        }
+    }
+    if (tmpspot != spot) {
+        spot = tmpspot;
+        dist1sw = 0;
+        dist2sw = 0;
+        dist3sw = 0;
+    }
 
-    goVibrate(299);
+    goVibrate(dist);
+
+    // alert(result[1][2]); 
     
 }
 
@@ -163,11 +184,20 @@ function goVibrate(dist) {
         return;
     }
     if (dist < 100) {
-        navigator.vibrate([1000,100,1000,10,1000,10,1000,10,1000]);
+        if (dist1sw == 0) {
+            navigator.vibrate([1000,100,1000,10,1000,10,1000,10,1000]);
+            dist1sw = 1;
+        }
     } else if (dist < 300) {
-        navigator.vibrate([1000,100,1000,10,1000]);
+        if (dist2sw == 0) {
+            navigator.vibrate([1000,100,1000,10,1000]);
+            dist2sw = 1;
+        }
     } else if (dist < 500) {
-        navigator.vibrate(1000);
+        if (dist3sw == 0) {
+            navigator.vibrate(1000);
+            dist3sw = 1;
+        }
     }
 }
 
