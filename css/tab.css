@@ -1,6 +1,9 @@
-/*イメージのサイズ変更*/
-img{
-  width: 50%;
+/*見出し*/
+h1{
+  text-align: center;
+}
+.logo{
+  width: 100%;
   height: auto;
 }
 /*四角く囲みます*/
@@ -15,12 +18,14 @@ img{
     margin: 0 3px;
     padding: 0 10px;
     border: 1px solid #AAA;
-    background: #ECECEC;
+    background: #E0FFF1;
     display: inline-block;
+
+    border-radius: 50px 50px 0 0; /*角を丸く*/
 }
 /*calss が　selectedのバックカラーを変えました*/
 .tabrow li.selected {
-    background: #FFF;
+    background: #17CAB6;
     color: #000;
 }
 /*下に線入れました*/
