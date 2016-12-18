@@ -9,31 +9,10 @@ function initMap(){
 
     var mapId ={
 	zoom: 12,
-	center: new google.maps.LatLng(34.292832,133.106863),
-        mapTypeControlOptions: {
-           mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-        }   
+	center: new google.maps.LatLng(34.292832,133.106863)
     };
 
     map = new google.maps.Map(document.getElementById("map"),mapId);
-
-  var styleOptions = [
-  {
-  "stylers": [
-      { "weight": 3.1 },
-      { "saturation": 42 },
-      { "lightness": 23 },
-      { "hue": "#ffcc00" },
-      { "gamma": 0.84 }
-      ]
-    }
-  ]
-
-    
-  var styledMapOptions = { name: 'つっきー' }
-  var sampleType = new google.maps.StyledMapType(styleOptions, styledMapOptions);
-  map.mapTypes.set('map_style', sampleType);
-  map.setMapTypeId('map_style');
 }
 
 /*公共クラウドの全国データ*/
@@ -152,7 +131,7 @@ var dist2sw = 0;
 var dist3sw = 0;
 var spot = 0;
 
-function getCSV(gPos){
+function getCSV(latitude,longitude){
     var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
     req.open("get", "./data/art.csv", true); // アクセスするファイルを指定
     req.send(null); // HTTPリクエストの発行
@@ -179,12 +158,13 @@ function convertCSVtoArray(str,pos){ // 読み込んだCSVデータが文字列�
     var img = setIconImage(getUqueryToType());
     for(var i=0;i<tmp.length;++i){
         setMarker(result[i][1],result[i][2],result[i][3],"http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png");
-        tmpdist = getDistance(pos.coords.latitude,pos.coords.longitude,esult[i][2],result[i][3])
+        tmpdist = getDistance(pos.coords.latitude,pos.coords.longitude,result[i][2],result[i][3]);
         if (tmpdist < dist) {
             tmpspot = result[i][0];
             dist = tmpdist;
         }
     }
+    
     if (tmpspot != spot) {
         spot = tmpspot;
         dist1sw = 0;
