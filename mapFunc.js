@@ -146,7 +146,7 @@ function getCSV(latitude,longitude){
 function convertCSVtoArray(str,pos){ // 読み込んだCSVデータが文字列として渡される
     var result = []; // 最終的な二次元配列を入れるための配列
     var tmp = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
-    var dist = 0.500;
+    var dist = 12.500;
     var tmpdist;
     var tmpspot;
  
@@ -181,7 +181,7 @@ function convertCSVtoArray(str,pos){ // 読み込んだCSVデータが文字列�
 function goVibrate(dist) {
     var vibrate = navigator.vibrate || navigator.mozVibrate;
 
-    if (dist >= 0.500) {
+    if (dist >= 12.500) {
         return;
     }
     if (dist < 0.100) {
@@ -194,7 +194,7 @@ function goVibrate(dist) {
             navigator.vibrate([1000,100,1000,100,1000]);
             dist2sw = 1;
         }
-    } else if (dist < 0.500) {
+    } else if (dist < 12.500) {
         if (dist3sw == 0) {
             navigator.vibrate(1000);
             dist3sw = 1;
