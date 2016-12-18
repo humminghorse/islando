@@ -36,7 +36,7 @@ var gPos = null;
 var visibleSpot = [];   
 
 /* スポットサーチの範囲（km）*/
-var searchRange = 0.2;
+var searchRange = 0.1;
 
 var getUqueryToType = function(){
 
@@ -104,6 +104,7 @@ $(document).ready(function(){
 
     var url = querySPARQL(baseurl, setQuery(type, uQuery), "?");
     var sd = 0.0;
+   /*近くの観光スポット位置情報を一時的に保管*/
     var tempdd = visibleSpot.concat();
 
    $.getJSON(url,function(data){
@@ -130,7 +131,9 @@ $(document).ready(function(){
          //console.log(sd);
 	 dd["range"] = sd;    
          console.log(dd);
-         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);				   	     
+         visibleSpot.push(dd);
+	 setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);				   	     
+         
 /*
         if(tempdd.length == 0){
            visibleSpot.push(dd);
