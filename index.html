@@ -6,15 +6,18 @@
   <title>ISLANDO!
     島ごと美術館を探せ！</title>
   </head>
-  <body style="background:#fff" >
-  <div style="padding:0px 0px 0px 8px;display:block;border-color:#cdcdcd;border-style:ridge;border-width:1">  
+  <body style="background-image:url(img/back_img.png)" >
+  <!-- <div style="padding:0px 0px 0px 8px;display:block;border-color:#cdcdcd;border-style:ridge;border-width:1"> -->
 <!--  <a href=../index.html style="color:#e13b84;font-size:80%;padding:4px 0px 4px 2px;display:block">&lt;&lt; WithKidsへ戻る</a> -->
-  <p style="font-weight:bold;font-size:120%;color:#e13b84">ISLANDO! 島ごと美術館を探せ！</p>
-  <tr>
+  <!-- <p style="font-weight:bold;font-size:120%;color:#e13b84">ISLANDO! 島ごと美術館を探せ！</p> -->
+  <!-- <tr> -->
 <!--    <th><img border="0" src="http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png" width="32" height="32" onclick="setTypeID('ts')"></th> -->
 <!--    <th><img border="0" src="../img/signal.png" width="36" height="12" align="center" valign="center" onclick="setTypeID('sg')"></th> -->
-  </tr>
-  </div>
+  <!-- </tr> -->
+  <header>
+  <img src="img/logo.png" alt="島ごと美術館を探せ！" class="logo">
+</header>
+  <!-- </div> -->
   <ul class="tabrow">
       <li class="selected"><a href="index.html">Map</a></li>
       <li><a href="kankoInfo.html">Infomation</a></li>
@@ -30,10 +33,10 @@
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3infBvJeAdiM6KqqBTS0i5jCnzIDWp8o&callback=initMap" type="text/javascript"></script>
 <script>
 
-/* GPSの位置情報の変数  */  
+/* GPSの位置情報の変数  */
 var gPos = null;
 /* 画面に表示するスポットの配列  */
-var visibleSpot = [];   
+var visibleSpot = [];
 
 /* スポットサーチの範囲（km）*/
 var searchRange = 0.2;
@@ -80,14 +83,14 @@ var getTypeToUquery = function(type) {
   if (type == "http://purl.org/jrrk#AED")
     return "aed";
   if (type == "http://purl.org/jrrk#PublicWIFI")
-    return "wifi"		   
+    return "wifi"
   if (type == "signal")
-    return "sg"		   
+    return "sg"
   else
     return "err";
 };
 
-       
+
 $(document).ready(function(){
 
     var baseurl = "https://sparql.odp.jig.jp/data/sparql";
@@ -100,7 +103,7 @@ $(document).ready(function(){
     var uQuery = "ts";
 
     /*GPSの現在地取得*/
-    setGeoLocation();				   
+    setGeoLocation();
 
     var url = querySPARQL(baseurl, setQuery(type, uQuery), "?");
     var sd = 0.0;
@@ -114,38 +117,40 @@ $(document).ready(function(){
           for(i=0; i<items.length; i++){
 
 	       var temp = items[i];
-               var dd =[]   
+               var dd =[]
 
 	       for(var n in temp){
-                   dd[n] = temp[n].value; 
+                   dd[n] = temp[n].value;
 	       }
 //	  console.log(dd)
 //          alert(dd.type)
 
      var img = setIconImage(getUqueryToType());
 
-     sd =  getDistance(gPos.coords.latitude,gPos.coords.longitude,dd.lat,dd.lng);		
-     getCSV(gPos);  // 生口島美術館展示物の位置情報を取得
+     sd =  getDistance(gPos.coords.latitude,gPos.coords.longitude,dd.lat,dd.lng);
 
      if(sd < searchRange ){
          //console.log(sd);
-	 dd["range"] = sd;    
+	 dd["range"] = sd;
          console.log(dd);
-         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);				   	     
+         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
 /*
         if(tempdd.length == 0){
            visibleSpot.push(dd);
-           setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);				   	     
+           setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
 	 } else{
 
 	   for(var n in tempdd){
 
              if(n.name == dd.name){
                 break;
-	     }	      
+	     }
            }
-	     
- 	 }     
+
+ 	 }
+ 	 // -------------------------------------------------
+ 	 getCSV(gPos);  // 生口島美術館展示物の位置情報を取得
+
 */
 
      }
@@ -153,26 +158,26 @@ $(document).ready(function(){
 
    });
 
-	     
-    /*GoogleMapに表示するマーカーの処理*/				   
-    // getCSV();  // 生口島美術館展示物の位置情報を取得
+
+    /*GoogleMapに表示するマーカーの処理*/
+    getCSV();  // 生口島美術館展示物の位置情報を取得
     getCSV_underground(); // GoogleMapに掲載されていない生口島の飲食店等の位置情報を取得
-				   
+
 });
 
 var setQuery = function(type, urlquery){
 
 // var type = getUqueryToType();
-// var urlquery = getTypeToUquery(type);		    
+// var urlquery = getTypeToUquery(type);
 //alert(type+"  "+urlquery);
-		    
+
  if(urlquery == "?type"){
 
     var q = "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
             "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
 	    "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
 	   "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-           "prefix address<http://purl.org/jrrk#>\n"+				          "select ?s ?location ?label ?lat ?lng ?desc {\n" + 
+           "prefix address<http://purl.org/jrrk#>\n"+				          "select ?s ?location ?label ?lat ?lng ?desc {\n" +
 	          "?s rdf:type " + type + ";\n" +
 	          "odp:location ?location;\n" +
                	  "rdfs:label ?label;\n" +
@@ -183,17 +188,17 @@ var setQuery = function(type, urlquery){
                   "filter(?type=<http://odp.jig.jp/odp/1.0#TourSpot> || ?type=<http://purl.org/jrrk#CivicPOI> || ?type=<http://odp.jig.jp/odp/1.0#VendingMachine> || ?type=<http://odp.jig.jp/odp/1.0#ServiceStation> || ?type=<http://purl.org/jrrk#BusStop> || ?type=<http://purl.org/jrrk#PublicToilet> || ?type=<http://purl.org/jrrk#AED>)\n"+
                   "filter(regex(?address, '福井県今立郡池田町'))\n"+
 		"} limit 100";
- 
+
  }
-				   
+
  if(urlquery == "ts"){
 
      var q = "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
 	     "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
 	     "prefix jrrk: <http://purl.org/jrrk#>\n" +
-	     "select ?s ?name ?lat ?lng ?desc ?link ?img{\n" + 
-             "graph ?graph {\n" + 
+	     "select ?s ?name ?lat ?lng ?desc ?link ?img{\n" +
+             "graph ?graph {\n" +
 		  "?s rdf:type <" + type + ">;\n" +
          	  "rdfs:label ?name;\n" +
 		  "geo:lat ?lat;\n" +
@@ -204,7 +209,7 @@ var setQuery = function(type, urlquery){
 		  "filter(lang(?name) = 'ja')\n" +
 		   "}\n" +
                    "}";
-		      
+
  }
 
  if(urlquery == "vm"){
@@ -212,7 +217,7 @@ var setQuery = function(type, urlquery){
      var q = "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
              "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-  	     "select ?s ?location ?lat ?lng ?desc {\n" + 
+  	     "select ?s ?location ?lat ?lng ?desc {\n" +
 	          "?s rdf:type <" + type + ">;\n" +
 	          "odp:location ?location;\n" +
 		  "geo:lat ?lat;\n" +
@@ -227,7 +232,7 @@ var setQuery = function(type, urlquery){
              "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
              "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-  	     "select ?s ?label ?lat ?lng {\n" + 
+  	     "select ?s ?label ?lat ?lng {\n" +
 	          "?s rdf:type <" + type + ">;\n" +
 	          "rdfs:label ?label;\n" +
 		  "geo:lat ?lat;\n" +
@@ -240,7 +245,7 @@ var setQuery = function(type, urlquery){
              "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
              "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-  	     "select ?s ?label ?lat ?lng {\n" + 
+  	     "select ?s ?label ?lat ?lng {\n" +
 	          "?s rdf:type <" + type + ">;\n" +
 	          "rdfs:label ?label;\n" +
 		  "geo:lat ?lat;\n" +
@@ -253,13 +258,13 @@ var setQuery = function(type, urlquery){
              "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
              "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-             "prefix address: <http://purl.org/jrrk#>\n" +		   
-  	     "select ?s ?label ?lat ?lng ?address{\n" + 
+             "prefix address: <http://purl.org/jrrk#>\n" +
+  	     "select ?s ?label ?lat ?lng ?address{\n" +
 	          "?s rdf:type <" + type + ">;\n" +
 	          "rdfs:label ?label;\n" +
 		  "geo:lat ?lat;\n" +
                   "geo:long ?lng;\n" +
-	          "address:address ?address.\n" +			   
+	          "address:address ?address.\n" +
 		"filter(regex(?address, '福井県今立郡池田町'))} limit 100";
  }
  if(urlquery == "wc"){
@@ -268,28 +273,28 @@ var setQuery = function(type, urlquery){
              "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
              "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-             "prefix address: <http://purl.org/jrrk#>\n" +		   
-  	     "select ?s ?label ?lat ?lng {\n" + 
+             "prefix address: <http://purl.org/jrrk#>\n" +
+  	     "select ?s ?label ?lat ?lng {\n" +
 	          "?s rdf:type <" + type + ">;\n" +
 	          "rdfs:label ?label;\n" +
 		  "geo:lat ?lat;\n" +
 		  "geo:long ?lng;\n" +
-		  "}";		   
+		  "}";
  }
-				   
+
  if(urlquery == "aed"){
 
     var q =  "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
              "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
              "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-             "prefix address: <http://purl.org/jrrk#>\n" +		   				   
-  	     "select ?s ?label ?lat ?lng ?address{\n" + 
+             "prefix address: <http://purl.org/jrrk#>\n" +
+  	     "select ?s ?label ?lat ?lng ?address{\n" +
 	          "?s rdf:type <" + type + ">;\n" +
 	          "rdfs:label ?label;\n" +
 		  "geo:lat ?lat;\n" +
 		  "geo:long ?lng;\n" +
-                  "address:address ?address.\n" +			   
+                  "address:address ?address.\n" +
 		"filter(regex(?address, '福井県今立郡池田町'))} limit 100";
 
   }
@@ -299,24 +304,24 @@ var setQuery = function(type, urlquery){
              "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
              "prefix odp: <http://odp.jig.jp/odp/1.0#>\n" +
              "prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" +
-             "prefix address: <http://purl.org/jrrk#>\n" +		   
-             "select ?s ?label ?lat ?lng ?address{\n" + 
+             "prefix address: <http://purl.org/jrrk#>\n" +
+             "select ?s ?label ?lat ?lng ?address{\n" +
 	          "?s rdf:type <" + type + ">;\n" +
 	          "rdfs:label ?label;\n" +
 		  "geo:lat ?lat;\n" +
 		  "geo:long ?lng;\n" +
                   "}";
 }
-				   
-//  alert(q); 
-  return q;				   
+
+//  alert(q);
+  return q;
 }
 
 var setGeoLocation = function(){
  if (navigator.geolocation) {
-       navigator.geolocation.watchPosition(			   
+       navigator.geolocation.watchPosition(
 	function(pos) {
-         
+
 	setGeoMarker(pos.coords.accuracy,pos.coords.latitude,pos.coords.longitude);
         //alert("現在地：緯度"+lat+" 経度："+lng);
 
@@ -339,7 +344,7 @@ var setGeoLocation = function(){
    }
 };
 
-/* ２地点館の距離計算  */	     
+/* ２地点館の距離計算  */
 var getDistance = function(lat1, lng1, lat2, lng2) {
 	var dlat = (lat2 - lat1) * Math.PI / 180;
 	var dlng = (lng2 - lng1) * Math.PI / 180;
@@ -350,7 +355,7 @@ var getDistance = function(lat1, lng1, lat2, lng2) {
 	return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 6371; // 6371 = R of the Earth in km
 };
 
-				   
+
 var setIconImage = function(type){
 
 	if (type == "http://odp.jig.jp/odp/1.0#VendingMachine")
@@ -390,7 +395,7 @@ var setIconImage = function(type){
                    scaledSize : new google.maps.Size(32, 32)
                 }
         return "http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png";
-}				   
-</script> 
+}
+</script>
 </body>
 </html>
