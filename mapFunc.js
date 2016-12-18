@@ -174,13 +174,15 @@ function convertCSVtoArray2(str){ // 読み込んだCSVデータが文字列と�
  
     // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
     for(var i=0;i<tmp2.length;++i){
-        result2[i] = tmp2[i].split(',');
+        result2[i] = tmp[i].split(',');
     }
     var img = setIconImage(getUqueryToType());
     for(var i=0;i<tmp2.length;++i){
         setMarker(result2[i][1],result2[i][2],result2[i][3],"http://maps.google.co.jp/mapfiles/ms/icons/blue-dot.png");
     } 
     // alert(result2[1][2]); 
+
+    goVibrate(299);
     
 }
 
