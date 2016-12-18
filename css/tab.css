@@ -17,7 +17,7 @@ h1{
 .tabrow li {
     margin: 0 3px;
     padding: 0 10px;
-    border: 1px solid #AAA;
+    border: 1px solid #59D757;
     background: #E0FFF1;
     display: inline-block;
 
@@ -38,7 +38,7 @@ h1{
     width: 100%;
     bottom: 0;
     left: 0;
-    border-bottom: 1px solid #AAA;
+    border-bottom: 1px solid #59D757;
     z-index: 1;
 }
 /*選択されたタブの下線はいらぬ！*/
@@ -51,5 +51,5 @@ h1{
 }
 .tabrow li.selected {
     z-index: 2;
-    border-bottom-color: #FFF;
+    border-bottom-color: #FFAE45;
 }
