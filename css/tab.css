@@ -3,6 +3,11 @@ img{
   width: 50%;
   height: auto;
 }
+/*ロゴ*/
+.logo{
+  width: 80%;
+  height: auto;
+}
 /*四角く囲みます*/
 .tabrow {
     text-align: left;
@@ -12,15 +17,17 @@ img{
     line-height: 24px;
 }
 .tabrow li {
-    margin: 0 3px;
-    padding: 0 10px;
-    border: 1px solid #AAA;
-    background: #ECECEC;
+  margin: 0 3px;
+    padding: 10px 20px 5px;
+    border: 1px solid #59D757;
+    background: #17CAB6;
     display: inline-block;
+
+    border-radius: 50px 50px 0 0; /*角を丸く*/
 }
 /*calss が　selectedのバックカラーを変えました*/
 .tabrow li.selected {
-    background: #FFF;
+  background: #69F761;
     color: #000;
 }
 /*下に線入れました*/
