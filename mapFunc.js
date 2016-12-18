@@ -81,14 +81,14 @@ var gpsMarker = null;
 /*GPSの位置表示*/
 function setGeoMarker(r, lat, lng){
 
-    if(gpsMaker == null){
-    
-       var latlng = new google.maps.LatLng(lat,lng);
-       var image = {
+     var latlng = new google.maps.LatLng(lat,lng);
+     var image = {
          url:"img/group.jpg",
 	 scaledSize : new google.maps.Size(32, 32)
-       }
-
+     }
+    
+    if(gpsMarker == null){
+    
 　　　gpsMarker = new google.maps.Marker({
 	position: latlng,
 	map: map,
@@ -96,7 +96,7 @@ function setGeoMarker(r, lat, lng){
     　});
     } else{
        /* GPSの位置更新  */
-	gpsMarker.setPosition(new google.maps.LatLng(lat,lng));
+	gpsMarker.setPosition(latlng);
     }
     
     
