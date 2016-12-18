@@ -240,7 +240,7 @@ function goVibrate(dist) {
     }
 }
 
-var setIconImageArt = function(no){
+function setIconImageArt(no){
 
 	if (no == "1")
                return {
