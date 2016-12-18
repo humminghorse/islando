@@ -177,36 +177,6 @@ function convertCSVtoArray(str,pos){ // 読み込んだCSVデータが文字列�
     
 }
 
-function getCSV_underground(){
-    var req2 = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
-    req2.open("get", "./data/underground.csv", true); // アクセスするファイルを指定
-    req2.send(null); // HTTPリクエストの発行
-    
-    // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ   
-    req2.onload = function(){
-    convertCSVtoArray2(req2.responseText); // 渡されるのは読み込んだCSVデータ
-    }
-}
-
-// 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
-function convertCSVtoArray2(str){ // 読み込んだCSVデータが文字列として渡される
-    var result2 = []; // 最終的な二次元配列を入れるための配列
-    var tmp2 = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
- 
-    // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
-    for(var i=0;i<tmp2.length;++i){
-        result2[i] = tmp[i].split(',');
-    }
-    var img = setIconImage(getUqueryToType());
-    for(var i=0;i<tmp2.length;++i){
-        setMarker(result2[i][1],result2[i][2],result2[i][3],"http://maps.google.co.jp/mapfiles/ms/icons/blue-dot.png");
-    } 
-    // alert(result2[1][2]); 
-
-    goVibrate(299);
-    
-}
-
 function goVibrate(dist) {
     var vibrate = navigator.vibrate || navigator.mozVibrate;
 
