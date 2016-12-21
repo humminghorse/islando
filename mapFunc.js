@@ -1,43 +1,74 @@
-﻿
-//var ikedaLatLng = new google.maps.LatLng(35.890358,136.344221);
+﻿//var ikedaLatLng = new google.maps.LatLng(35.890358,136.344221);
 
 //var onomichiLatLng = new google.maps.LatLng(34.404839,133.193653);
 
 //生口島　34.292832,133.106863
 
+var map;
+
 function initMap(){
+  if (navigator.geolocation) {
+       navigator.geolocation.watchPosition(
+	function(pos) {
 
-    var mapId ={
-	zoom: 12,
-	center: new google.maps.LatLng(34.292832,133.106863),
-	center: new google.maps.LatLng(34.292832,133.106863),
-        mapTypeControlOptions: {
-           mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-        }
-    };
+            var mapId ={
+         	zoom: 18,
+	        center: new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude),
+                mapTypeControlOptions: {
+                  mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+                }
+           };
 
-    map = new google.maps.Map(document.getElementById("map"),mapId);
+           map = new google.maps.Map(document.getElementById("map"),mapId);
 
-    var styleOptions = [
-  {
-  "stylers": [
-      { "weight": 3.1 },
-      { "saturation": 42 },
-      { "lightness": 23 },
-      { "hue": "#ffcc00" },
-      { "gamma": 0.84 }
-      ]
-    }
-  ]
+           var styleOptions = [
+           {
+             "stylers": [
+           { "weight": 3.1 },
+           { "saturation": 42 },
+           { "lightness": 23 },
+           { "hue": "#ffcc00" },
+           { "gamma": 0.84 }
+             ]
+           }
+           ]
     
-  var styledMapOptions = { name: 'つっきー' }
-  var sampleType = new google.maps.StyledMapType(styleOptions, styledMapOptions);
-  map.mapTypes.set('map_style', sampleType);
-  map.setMapTypeId('map_style');
+            var styledMapOptions = { name: '現在地' }
+            var sampleType = new google.maps.StyledMapType(styleOptions, styledMapOptions);
+            map.mapTypes.set('map_style', sampleType);
+            map.setMapTypeId('map_style');
 
-}
+            setGeoMarker(pos.coords.accuracy,pos.coords.latitude,pos.coords.longitude);
+	},
+	function(err) {
+		var errmes = [ "", "許可されてません", "判定できません", "タイムアウト" ];
+		console.log(errmes[err]);
+		ignoreGPS();
+          },
+	  {
+		enableHighAccuracy: true,
+		timeout: 10000, // タイムアウト10秒
+		maximumAge: 0 // nmsec前のデータを使う、0でキャッシュしない
+	   }
+	);
+	} else {
+		ignoreGPS();
+   }
+};
 
-/*公共クラウドの全国データ*/
+var setArtStaticMap = function(mQuery) {
+    var APIKEY = "AIzaSyD3infBvJeAdiM6KqqBTS0i5jCnzIDWp8o";
+    var s = "https://maps.googleapis.com/maps/api/staticmap?";
+    s += "key=" + APIKEY + "&";
+    s+= "size=600x300&scale=2&zoom=12&maptype=roadmap&";
+    s += "center=34.292832%2C133.106863&"
+    s += mQuery;
+    s += "sensor=false";
+
+    var gmap = document.getElementById("gmap");
+    gmap.src = s;
+};    
+        /*公共クラウドの全国データ*/
 function setMarkerTS(name,lat, lng, info, link){
 
     var latlng = new google.maps.LatLng(lat,lng);
@@ -56,7 +87,7 @@ function setMarkerTS(name,lat, lng, info, link){
 
     var infoWindow = new google.maps.InfoWindow({
 	content: s
-             
+            
     });
     
     google.maps.event.addListener(marker,'mouseover',function(){
@@ -109,19 +140,15 @@ function setGeoMarker(r, lat, lng){
 	 scaledSize : new google.maps.Size(32, 32)
      }
     
-    if(gpsMarker == null){
-    
+    if(gpsMarker){
+	gpsMarker.setMap(null);
+    }
 　　　gpsMarker = new google.maps.Marker({
 	position: latlng,
 	map: map,
 	icon:image
     　});
-    } else{
-       /* GPSの位置更新  */
-	gpsMarker.setPosition(latlng);
-    }
-    
-    
+   
     google.maps.event.addListener(gpsMarker,'mouseover',function(){
         infoWindow.open(map, gpsMarker);
     });
@@ -152,24 +179,47 @@ var dist1sw = 0;
 var dist2sw = 0;
 var dist3sw = 0;
 var spot = 0;
-
-function getCSV(latitude,longitude){
+/*
+function getCSV(fileurl){
     var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
-    req.open("get", "./data/art.csv", true); // アクセスするファイルを指定
+    req.open("get", fileurl, true); // アクセスするファイルを指定
     req.send(null); // HTTPリクエストの発行
-	
+
     // レスポンスが返ってきたらconvertCSVtoArray()を呼ぶ	
     req.onload = function(){
-        convertCSVtoArray(req.responseText,gPos); // GPSデータとの距離計算あり
+        convertCSVtoArray2(req.responseText); // GPSデータとの距離計算あり
 
 /*        if(type == "range")
             convertCSVtoArray(req.responseText,gPos); // GPSデータとの距離計算あり
 	else
 	   convertCSVtoArray2(req.responseText); // pin表示のみ 
-*/
 
     }
-}
+
+};
+*/
+
+
+// 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
+function convertCSVtoArray2(str){ // 読み込んだCSVデータが文字列として渡される
+    var result = []; // 最終的な二次元配列を入れるための配列
+    var tmp = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
+ 
+    // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
+    for(var i=0;i<tmp.length;++i){
+        result[i] = tmp[i].split(',');
+    }
+
+    var img = "http://maps.google.co.jp/mapfiles/ms/icons/blue-dot.png";
+    
+    for(var i=0;i<tmp.length;++i){
+        setMarker(result[i][1],result[i][2],result[i][3], img);
+    } 
+    // alert(result2[1][2]); 
+    
+};
+
+
 
 // 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
 function convertCSVtoArray(str,pos){ // 読み込んだCSVデータが文字列として渡される
@@ -219,24 +269,6 @@ function getCSV_underground(){
     }
 }
 
-// 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
-function convertCSVtoArray2(str){ // 読み込んだCSVデータが文字列として渡される
-    var result2 = []; // 最終的な二次元配列を入れるための配列
-    var tmp2 = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
- 
-    // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
-    for(var i=0;i<tmp2.length;++i){
-        result2[i] = tmp2[i].split(',');
-//        console.log(result2);
-    }
-
-    for(var i=0;i<tmp2.length;++i){
-        setMarker(result2[i][1],result2[i][2],result2[i][3],"http://maps.google.co.jp/mapfiles/ms/icons/blue-dot.png");
-    } 
-    // alert(result2[1][2]); 
-    
-}
-
 
 function goVibrate(dist) {
     var vibrate = navigator.vibrate || navigator.mozVibrate;
@@ -262,7 +294,7 @@ function goVibrate(dist) {
     }
 }
 
-function setIconImageArt(no){
+function setIconImgArt(no){
 
 	if (no == "1")
                return {
@@ -272,7 +304,7 @@ function setIconImageArt(no){
 	if (no == "2")
                return {
  		   url:"img/2.png",
-                   scaledSize : new google.maps.Size(30, 30)
+                  scaledSize : new google.maps.Size(30, 30)
                 }
 	if (no == "3")
                return {
@@ -351,5 +383,5 @@ function setIconImageArt(no){
                    scaledSize : new google.maps.Size(30, 30)
                 }
         return "http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png";
-}
-
+};
+B

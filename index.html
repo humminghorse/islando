@@ -21,10 +21,21 @@
   <ul class="tabrow">
       <li class="selected"><a href="index.html">地図</a></li>
       <li><a href="kankoInfo.html">観光情報</a></li>
-</ul>
-<div id="map" style="width:100%; height:100%; display:block"></div>
+ </ul>
+<div id="tb" class="table">
+  <div class="row">
+    <div  class="rowimg">このアート作品を探そう！</div>
+    <div  class="rowmap"><img src="http://maps.google.co.jp/mapfiles/ms/icons/question.png" style="width:5%;height:50%"/>にあるアート作品は何かな？</div>
+  </div>
+  <div class="row">
+    <div  class="rowimg"><img src="./img/1.png" id="target"/></div>
+    <div  class="rowmap"><img src="" id="gmap"/></div>
+  </div>
+</div>
+<div id="map" style="width:100%; height:50%; display:block"></div>
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="./css/tab.css">
+<link rel="stylesheet" type="text/css" href="./css/display.css">
 <!-- script -->
 <script type="text/javascript" src="mapFunc.js"></script>
 <script type="text/javascript" src="myFuncSet.js"></script>
@@ -91,6 +102,11 @@ var getTypeToUquery = function(type) {
 };
 
 
+var dataArt;
+var dataUspot;	     
+var artIndex=16;
+
+
 $(document).ready(function(){
 
     var baseurl = "https://sparql.odp.jig.jp/data/sparql";
@@ -102,8 +118,11 @@ $(document).ready(function(){
     var type = "http://odp.jig.jp/odp/1.0#TourSpot";
     var uQuery = "ts";
 
+    /*アート作品のマップ情報を静止画で取得*/
+    loadArtStaticMap();
+
     /*GPSの現在地取得*/
-    setGeoLocation();
+//    setGeoLocation();
 
     var url = querySPARQL(baseurl, setQuery(type, uQuery), "?");
     var sd = 0.0;
@@ -112,12 +131,11 @@ $(document).ready(function(){
    $.getJSON(url,function(data){
 
      var  items = data.results.bindings;
-//     alert(items.length);
 
           for(i=0; i<items.length; i++){
 
 	       var temp = items[i];
-               var dd =[]
+               var dd =[];
 
 	       for(var n in temp){
                    dd[n] = temp[n].value;
@@ -125,43 +143,70 @@ $(document).ready(function(){
 //	  console.log(dd)
 //          alert(dd.type)
 
-     var img = setIconImage(getUqueryToType());
+//     var img = setIconImage(getUqueryToType());
 
-     sd =  getDistance(gPos.coords.latitude,gPos.coords.longitude,dd.lat,dd.lng);
+//     sd =  getDistance(gPos.coords.latitude,gPos.coords.longitude,dd.lat,dd.lng);
 
      if(sd < searchRange ){
          //console.log(sd);
 	 dd["range"] = sd;
 //         console.log(dd);
          setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
-/*
-        if(tempdd.length == 0){
-           visibleSpot.push(dd);
-           setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
-	 } else{
-
-	   for(var n in tempdd){
-
-             if(n.name == dd.name){
-                break;
-	     }
-           }
-
- 	 }
-*/
-        getCSV(gPos);  // 生口島美術館展示物の位置情報を取得
-    }     
-   }
-
-   });
-
+      }     
+    }
+  });
 
     /*GoogleMapに表示するマーカーの処理*/
-     getCSV();  // 生口島美術館展示物の位置情報を取得
-	     
-     getCSV_underground(); // GoogleMapに掲載されていない生口島の飲食店等の位置情報を取得
+    //loadArtObj();
+    //loadUnderground();	     
 
+     $("#target").click(function(){
+                var tmpIndex = (artIndex + 1) % 17;
+                artIndex = tmpIndex;
+	        var src = "./img/"+tmpIndex+".png";
+		$("#target").fadeOut("slow",function() {
+			$(this).attr("src",src);
+			$(this).fadeIn();
+		});
+		return false;
+     });
 });
+
+var loadArtStaticMap = function() {
+	var url = "data/art.csv";
+	getCSV(url, function(data) {
+        var mQuery;
+      for(var i=0;i<data.length;++i){
+        mQuery += "markers=icon:http://maps.google.co.jp/mapfiles/ms/icons/question.png%7Clabel:"+data[i][1]+"%7C"+data[i][2]+","+data[i][3]+"&";		     
+      }
+      setArtStaticMap(mQuery);		     
+  });
+};
+	     
+var loadArtObj = function() {
+	var url = "data/art.csv";
+	getCSV(url, function(data) {
+        var mQuery;
+      for(var i=0;i<data.length;++i){
+        setMarker(data[i][1],data[i][2],data[i][3],setIconImgArt(i+1));
+      }
+  });
+};
+
+var loadUnderground = function() {
+	var url = "data/underground.csv";
+	getCSV(url, function(data) {
+
+        putMarker(data,"http://maps.google.co.jp/mapfiles/ms/icons/blue-dot.png");		    
+	});
+};
+
+var putMarker = function(data,img){
+   for(var i=0;i<data.length;++i){
+        setMarker(data[i][1],data[i][2],data[i][3],img);
+   }
+};	    
+	     
 
 var setQuery = function(type, urlquery){
 
