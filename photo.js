@@ -1,6 +1,5 @@
 'use strict'
 
-
 window.onload = function Createimg(){
   $.getJSON("./json/ikuchi.json", function(data){
 
@@ -14,6 +13,11 @@ window.onload = function Createimg(){
     // var hoge_2 = $("#jpn");
     // var hoge_3 = $("#eng");
 
+    /* 名称を表示 */
+    var hoge = $("<h3>").text(data[i]["名称"]+" "+data[i]["名称(英語)"]);
+    html.append(hoge);
+
+    /* 画像を表示 */
     var img = $("<img></img>", {
         width: 180,
         height: 200,
@@ -22,10 +26,11 @@ window.onload = function Createimg(){
     });
     html.append(img);
 
-    var hoge = $("<h3>").text(data[i]["名称"]+" "+data[i]["名称(英語)"]);
-
-    html.append(hoge);
-
+      var openNavi = $("<a>ここへ行く</a>", {
+          src: "http://maps.google.com/maps?saddr='現在地'&daddr="+data[i]['緯度']+","+data[i]['経度']
+      });
+      html.append(openNavi)  
+      
     localStorage.setItem("ido"+i,data[i]["緯度"]);
     localStorage.setItem("kei"+i,data[i]["経度"]);
 
