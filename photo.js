@@ -2,7 +2,7 @@
 
 
 window.onload = function Createimg(){
-  $.getJSON("https//kojix24.github.io/islando/json/ikuchi.json", function(data){
+  $.getJSON("./json/ikuchi.json", function(data){
 
     var img = document.getElementById("pic");
     // idがmainの要素を取得し、中身をリセットする
