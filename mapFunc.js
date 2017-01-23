@@ -2,46 +2,22 @@
 
 //var onomichiLatLng = new google.maps.LatLng(34.404839,133.193653);
 
-//生口島　34.292832,133.106863
+var defpos = [34.300451, 133.147356,"生口島北インターチェンジ"];
 
 var map;
 
 function initMap(){
   if (navigator.geolocation) {
        navigator.geolocation.watchPosition(
-	function(pos) {
+       function(pos) {
+	       
+    //        showItems(pos.coords.latitude,pos.coords.longitude);
 
-            var mapId ={
-         	zoom: 18,
-	        center: new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude),
-                mapTypeControlOptions: {
-                  mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-                }
-           };
-
-           map = new google.maps.Map(document.getElementById("map"),mapId);
-
-           var styleOptions = [
-           {
-             "stylers": [
-           { "weight": 3.1 },
-           { "saturation": 42 },
-           { "lightness": 23 },
-           { "hue": "#ffcc00" },
-           { "gamma": 0.84 }
-             ]
-           }
-           ]
-    
-            var styledMapOptions = { name: '現在地' }
-            var sampleType = new google.maps.StyledMapType(styleOptions, styledMapOptions);
-            map.mapTypes.set('map_style', sampleType);
-            map.setMapTypeId('map_style');
-
-            setGeoMarker(pos.coords.accuracy,pos.coords.latitude,pos.coords.longitude);
+             /*test用*/
+	      showItems(defpos[0], defpos[1]);	    
 	},
 	function(err) {
-		var errmes = [ "", "許可されてません", "判定できません", "タイムアウト" ];
+        	var errmes = [ "", "許可されてません", "判定できません", "タイムアウト" ];
 		console.log(errmes[err]);
 		ignoreGPS();
           },
@@ -53,7 +29,55 @@ function initMap(){
 	);
 	} else {
 		ignoreGPS();
-   }
+    }
+};
+
+var ignoreGPS = function() {
+	alert("位置が取得できません。\n" + defpos[2] + "にいるとして調べます");
+	showItems(defpos[0], defpos[1]);
+};
+
+var showItems = function(clat,clng) {
+
+   var mapId ={
+       zoom: 14,
+       center: new google.maps.LatLng(clat,clng),
+       mapTypeControlOptions: {
+       mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+       }
+    };
+
+    map = new google.maps.Map(document.getElementById("map"),mapId);
+
+    var styleOptions = [
+    {
+      "stylers": [
+    { "weight": 3.1 },
+    { "saturation": 42 },
+    { "lightness": 23 },
+    { "hue": "#ffcc00" },
+    { "gamma": 0.84 }
+    ]
+    }
+    ]
+    
+    var styledMapOptions = { name: '現在地' }
+    var sampleType = new google.maps.StyledMapType(styleOptions, styledMapOptions);
+    map.mapTypes.set('map_style', sampleType);
+    map.setMapTypeId('map_style');
+
+    setGeoMarker(clat,clng);
+
+    loadArtObj();
+};
+
+var loadArtObj = function() {
+	var url = "data/art.csv";
+	getCSV(url, function(data) {
+        for(var i=0;i<data.length;++i){
+           setMarker(data[i][1],data[i][2],data[i][3],setIconImgArt(i));
+          }
+        });
 };
 
 var setArtStaticMap = function(mQuery) {
@@ -68,7 +92,8 @@ var setArtStaticMap = function(mQuery) {
     var gmap = document.getElementById("gmap");
     gmap.src = s;
 };    
-        /*公共クラウドの全国データ*/
+
+/*公共クラウドの全国データ*/
 function setMarkerTS(name,lat, lng, info, link){
 
     var latlng = new google.maps.LatLng(lat,lng);
@@ -132,7 +157,7 @@ function setMarker(label,lat, lng, img){
 var gpsMarker = null;
 
 /*GPSの位置表示*/
-function setGeoMarker(r, lat, lng){
+function setGeoMarker(lat, lng){
 
      var latlng = new google.maps.LatLng(lat,lng);
      var image = {
@@ -161,7 +186,7 @@ function setGeoMarker(r, lat, lng){
 	content: "現在地"
     });
 
- /*   
+   
     new google.maps.Circle({
          map: map,
          center: latlng,
@@ -172,13 +197,14 @@ function setGeoMarker(r, lat, lng){
          fillColor: '#0088ff',
          fillOpacity: 0.2
     });
-*/
+
 }
 
 var dist1sw = 0;
 var dist2sw = 0;
 var dist3sw = 0;
 var spot = 0;
+
 /*
 function getCSV(fileurl){
     var req = new XMLHttpRequest(); // HTTPでファイルを読み込むためのXMLHttpRrequestオブジェクトを生成
@@ -193,9 +219,7 @@ function getCSV(fileurl){
             convertCSVtoArray(req.responseText,gPos); // GPSデータとの距離計算あり
 	else
 	   convertCSVtoArray2(req.responseText); // pin表示のみ 
-
     }
-
 };
 */
 
@@ -218,7 +242,6 @@ function convertCSVtoArray2(str){ // 読み込んだCSVデータが文字列と�
     // alert(result2[1][2]); 
     
 };
-
 
 
 // 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
@@ -296,92 +319,124 @@ function goVibrate(dist) {
 
 function setIconImgArt(no){
 
-	if (no == "1")
+	if (no == 0)
+               return {
+ 		   url:"img/0.png",
+                   scaledSize : new google.maps.Size(30, 30)
+                }
+	if (no == 1)
                return {
  		   url:"img/1.png",
-                   scaledSize : new google.maps.Size(30, 30)
-                }
-	if (no == "2")
-               return {
- 		   url:"img/2.png",
                   scaledSize : new google.maps.Size(30, 30)
                 }
-	if (no == "3")
+	if (no == 2)
                return {
- 		   url:"img/3.png",
+ 		   url:"img/2.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-	if (no == "4")
+	if (no == 3)
+               return {
+ 		   url: "img/3.png",
+                   scaledSize : new google.maps.Size(30, 30)
+                }
+	if (no == 4)
                return {
  		   url: "img/4.png",
-                   scaledSize : new google.maps.Size(30, 30)
+		   scaledSize : new google.maps.Size(30, 30)
                 }
-	if (no == "5")
+	if (no == 5)
                return {
  		   url: "img/5.png",
-
-				   scaledSize : new google.maps.Size(30, 30)
+                   scaledSize : new google.maps.Size(30, 30)
                 }
-	if (no == "6")
+  	if (no == 6)
                return {
  		   url: "img/6.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "7")
+  	if (no == 7)
                return {
  		   url: "img/7.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "8")
+  	if (no == 8)
                return {
  		   url: "img/8.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "9")
+  	if (no == 9)
                return {
  		   url: "img/9.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "10")
+  	if (no == 10)
                return {
  		   url: "img/10.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "11")
+  	if (no == 11)
                return {
  		   url: "img/11.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "12")
+  	if (no == 12)
                return {
  		   url: "img/12.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "13")
+  	if (no == 13)
                return {
  		   url: "img/13.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "14")
+  	if (no == 14)
                return {
  		   url: "img/14.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "15")
+  	if (no == 15)
                return {
  		   url: "img/15.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "16")
+  	if (no == 16)
                return {
  		   url: "img/16.png",
                    scaledSize : new google.maps.Size(30, 30)
                 }
-  	if (no == "17")
-               return {
- 		   url: "img/17.png",
-                   scaledSize : new google.maps.Size(30, 30)
-                }
         return "http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png";
 };
-B
+
+var getHTTP = function(url, callback) {
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+	if (xhr.readyState == 4) {
+		if (xhr.status == 0) {
+			alert("通信に失敗しました。再読込してください。");
+		} else {
+         		if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+				//alert("受信:" + xhr.responseText);
+         			callback(xhr.responseText);
+			} else {
+				alert("通信に失敗しました。再読込してください。<br>" + xhr.status);
+			}
+		}
+	}
+	};
+	xhr.open("GET" , url);
+	var senddata = null; // "送信テスト";
+	xhr.send(senddata);
+};
+
+var getCSV = function(url, callback) {
+	getHTTP(url, function(data) {
+		var ss = data.split('\n');
+		var list = [];
+		for (var i = 0; i < ss.length; i++) {
+			var ss2 = ss[i].split(',');
+			list.push(ss2);
+		}
+            console.log(list);
+		callback(list);
+	});
+};

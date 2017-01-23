@@ -27,9 +27,10 @@ window.onload = function Createimg(){
     html.append(img);
     html.append("<br>");
 
-      var openNavi = $("<a>ここへ行く</a>", {
-          href: "http://maps.google.com/maps?saddr='現在地'&daddr="+data[i]['緯度']+","+data[i]['経度']
-      });
+      var ido = data[i]["緯度"];
+      var kei = data[i]["経度"];
+      var naviUrl = "http://maps.google.com/maps?saddr=現在地&daddr="+ido+","+kei+"&dirflag=d";
+      var openNavi = "<a href="+naviUrl+">ここへ行く</a>";
       html.append(openNavi)  
       
     localStorage.setItem("ido"+i,data[i]["緯度"]);

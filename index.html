@@ -21,18 +21,17 @@
   <ul class="tabrow">
       <li class="selected"><a href="index.html">地図</a></li>
       <li><a href="kankoInfo.html">観光情報</a></li>
- </ul>
-<div id="tb" class="table">
-  <div class="row">
-    <div  class="rowimg">このアート作品を探そう！</div>
-    <div  class="rowmap"><img src="http://maps.google.co.jp/mapfiles/ms/icons/question.png" style="width:5%;height:50%"/>にあるアート作品は何かな？</div>
-  </div>
+  </ul>
+  <div id="tb" class="table">
   <div class="row">
     <div  class="rowimg"><img src="./img/1.png" id="target"/></div>
-    <div  class="rowmap"><img src="" id="gmap"/></div>
+    <figure id="tb" class="relative">
+    <img src="" id="gmap"/>
+    <figcaption class="absolute"><p>地図の場所のアート作品を探そう！</p></figcaption>
+    </figure>
   </div>
-</div>
-<div id="map" style="width:100%; height:50%; display:block"></div>
+  </div>
+<div id="map" style="width:100%; height:100%; display:block"></div>
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="./css/tab.css">
 <link rel="stylesheet" type="text/css" href="./css/display.css">
@@ -121,9 +120,6 @@ $(document).ready(function(){
     /*アート作品のマップ情報を静止画で取得*/
     loadArtStaticMap();
 
-    /*GPSの現在地取得*/
-//    setGeoLocation();
-
     var url = querySPARQL(baseurl, setQuery(type, uQuery), "?");
     var sd = 0.0;
     var tempdd = visibleSpot.concat();
@@ -151,13 +147,12 @@ $(document).ready(function(){
          //console.log(sd);
 	 dd["range"] = sd;
 //         console.log(dd);
-         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
+//         setMarkerTS(dd.name,dd.lat,dd.lng,dd.desc,dd.link);
       }     
     }
   });
 
     /*GoogleMapに表示するマーカーの処理*/
-    //loadArtObj();
     //loadUnderground();	     
 
      $("#target").click(function(){
@@ -170,6 +165,7 @@ $(document).ready(function(){
 		});
 		return false;
      });
+     
 });
 
 var loadArtStaticMap = function() {
@@ -177,28 +173,18 @@ var loadArtStaticMap = function() {
 	getCSV(url, function(data) {
         var mQuery;
       for(var i=0;i<data.length;++i){
-        mQuery += "markers=icon:http://maps.google.co.jp/mapfiles/ms/icons/question.png%7Clabel:"+data[i][1]+"%7C"+data[i][2]+","+data[i][3]+"&";		     
+//        mQuery += "markers=icon:http://maps.google.co.jp/mapfiles/ms/icons/question.png%7Clabel:"+data[i][1]+"%7C"+data[i][2]+","+data[i][3]+"&";
+          mQuery += "markers=icon:http://maps.google.co.jp/mapfiles/ms/icons/question.png%7Clabel:"+data[i][1]+"%7C"+data[i][2]+","+data[i][3]+"&";		     		     
       }
       setArtStaticMap(mQuery);		     
-  });
-};
-	     
-var loadArtObj = function() {
-	var url = "data/art.csv";
-	getCSV(url, function(data) {
-        var mQuery;
-      for(var i=0;i<data.length;++i){
-        setMarker(data[i][1],data[i][2],data[i][3],setIconImgArt(i+1));
-      }
   });
 };
 
 var loadUnderground = function() {
 	var url = "data/underground.csv";
 	getCSV(url, function(data) {
-
-        putMarker(data,"http://maps.google.co.jp/mapfiles/ms/icons/blue-dot.png");		    
-	});
+          putMarker(data,"http://maps.google.co.jp/mapfiles/ms/icons/blue-dot.png");		    
+        });
 };
 
 var putMarker = function(data,img){
@@ -359,34 +345,6 @@ var setQuery = function(type, urlquery){
 //  alert(q);
   return q;
 }
-
-var setGeoLocation = function(){
- if (navigator.geolocation) {
-       navigator.geolocation.watchPosition(
-	function(pos) {
-
-	setGeoMarker(pos.coords.accuracy,pos.coords.latitude,pos.coords.longitude);
-        //alert("現在地：緯度"+lat+" 経度："+lng);
-
-         gPos = pos;
-
-       },
-	function(err) {
-		var errmes = [ "", "許可されてません", "判定できません", "タイムアウト" ];
-		console.log(errmes[err]);
-		ignoreGPS();
-          },
-	  {
-		enableHighAccuracy: true,
-		timeout: 10000, // タイムアウト10秒
-		maximumAge: 0 // nmsec前のデータを使う、0でキャッシュしない
-	   }
-	);
-	} else {
-		ignoreGPS();
-   }
-};
-
 /* ２地点館の距離計算  */
 var getDistance = function(lat1, lng1, lat2, lng2) {
 	var dlat = (lat2 - lat1) * Math.PI / 180;
@@ -397,7 +355,6 @@ var getDistance = function(lat1, lng1, lat2, lng2) {
 		* Math.sin(dlng / 2) * Math.sin(dlng / 2);
 	return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 6371; // 6371 = R of the Earth in km
 };
-
 
 var setIconImage = function(type){
 
@@ -425,7 +382,7 @@ var setIconImage = function(type){
                return {
  		   url: "../img/icon-wc.png",
 
-				   scaledSize : new google.maps.Size(32, 32)
+		   scaledSize : new google.maps.Size(32, 32)
                 }
 	if (type == "http://purl.org/jrrk#AED")
                return {
