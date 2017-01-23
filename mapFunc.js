@@ -189,7 +189,7 @@ function setGeoMarker(lat, lng){
 
   google.maps.event.addListener(gpsMarker,'click',function(){
       if(window.confirm("Instagramで投稿しますか？")){
-          location.href = "instagram://";
+          location.href = "instagram://app";
       }
   });
 
