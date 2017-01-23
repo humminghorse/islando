@@ -174,7 +174,7 @@ function setGeoMarker(lat, lng){
 	icon:image
     　});
    
-    google.maps.event.addListener(gpsMarker,'mouseover',function(){
+/*    google.maps.event.addListener(gpsMarker,'mouseover',function(){
         infoWindow.open(map, gpsMarker);
     });
 
@@ -185,8 +185,15 @@ function setGeoMarker(lat, lng){
     var infoWindow = new google.maps.InfoWindow({
 	content: "現在地"
     });
+*/
 
-   
+  google.maps.event.addListener(gpsMarker,'click',function(){
+      if(window.confirm("Instagramで投稿しますか？")){
+          location.href = "instagram://";
+      }
+  });
+
+    
     new google.maps.Circle({
          map: map,
          center: latlng,
