@@ -19,11 +19,11 @@ window.onload = function Createimg(){
 
       var imgdata = data[i]["画像URL"];  
 
-      alert(imgdata);
+      console(imgdata);
       
-      if(imgdata = "")
+      if(imgdata == ""){
 	  imgdata = "./img/no_image.png"
-      
+      }
     /* 画像を表示 */
     var img = $("<img></img>", {
         width: 180,
