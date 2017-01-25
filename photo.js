@@ -14,7 +14,7 @@ window.onload = function Createimg(){
     // var hoge_3 = $("#eng");
 
     /* 名称を表示 */
-    var hoge = $("<h3>").text(data[i]["名称"]+"<br>"+data[i]["名称(英語)"]);
+    var hoge = $("<h3>").text(data[i]["名称"]+" "+data[i]["名称(英語)"]);
     html.append(hoge);
 
       var imgdata = data[i]["画像URL"];  
