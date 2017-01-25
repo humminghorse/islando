@@ -19,7 +19,7 @@ window.onload = function Createimg(){
 
       var imgdata = data[i]["画像URL"];  
 
-      console(imgdata);
+      console.log(imgdata);
       
       if(imgdata == ""){
 	  imgdata = "./img/no_image.png"
