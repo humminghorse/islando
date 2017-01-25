@@ -18,6 +18,8 @@ window.onload = function Createimg(){
     html.append(hoge);
 
       var imgdata = data[i]["画像URL"];  
+
+      alert(imgdata);
       
       if(imgdata = "")
 	  imgdata = "./img/no_image.png"
