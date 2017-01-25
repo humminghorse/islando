@@ -17,11 +17,16 @@ window.onload = function Createimg(){
     var hoge = $("<h3>").text(data[i]["名称"]+" "+data[i]["名称(英語)"]);
     html.append(hoge);
 
+      var imgdata = data[i]["画像URL"];  
+      
+      if(imgdata = "")
+	  imgdata = "./img/no_image.png"
+      
     /* 画像を表示 */
     var img = $("<img></img>", {
         width: 180,
         height: 200,
-        src: data[i]["画像URL"],
+        src: imgdata,
         alt:  data[i]["名称"]
     });
     html.append(img);

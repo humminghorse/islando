@@ -11,10 +11,10 @@ function initMap(){
        navigator.geolocation.watchPosition(
        function(pos) {
 	       
-    //        showItems(pos.coords.latitude,pos.coords.longitude);
+        showItems(pos.coords.latitude,pos.coords.longitude);
 
              /*test用*/
-	      showItems(defpos[0], defpos[1]);	    
+//	      showItems(defpos[0], defpos[1]);	    
 	},
 	function(err) {
         	var errmes = [ "", "許可されてません", "判定できません", "タイムアウト" ];
