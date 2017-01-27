@@ -13,14 +13,15 @@ window.onload = function Createimg(){
     // var hoge_2 = $("#jpn");
     // var hoge_3 = $("#eng");
 
+    html.append("<td>");
     /* 名称を表示 */
     var hoge = $("<h3>").text(data[i]["名称"]+" "+data[i]["名称(英語)"]);
     html.append(hoge);
 
-      var imgdata = data[i]["画像URL"];  
+      var imgdata = data[i]["画像URL"];
 
       console.log(imgdata);
-      
+
       if(imgdata == ""){
 	  imgdata = "./img/no_image.png"
       }
@@ -32,14 +33,15 @@ window.onload = function Createimg(){
         alt:  data[i]["名称"]
     });
     html.append(img);
+    html.append("</td>");
     html.append("<br>");
 
       var ido = data[i]["緯度"];
       var kei = data[i]["経度"];
       var naviUrl = "http://maps.google.com/maps?saddr=現在地&daddr="+ido+","+kei+"&dirflag=d";
       var openNavi = "<a href="+naviUrl+">ここへ行く</a>";
-      html.append(openNavi)  
-      
+      html.append(openNavi)
+
     localStorage.setItem("ido"+i,data[i]["緯度"]);
     localStorage.setItem("kei"+i,data[i]["経度"]);
 
