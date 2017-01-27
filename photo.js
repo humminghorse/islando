@@ -8,12 +8,14 @@ window.onload = function Createimg(){
     var html = $("#figu");
     var location = $("#loca");
 
+    // html.append("<tr>");
+
   for (var i = 0; i < data.length; i++){
 
     // var hoge_2 = $("#jpn");
     // var hoge_3 = $("#eng");
 
-    html.append("<td>");
+
     /* 名称を表示 */
     var hoge = $("<h3>").text(data[i]["名称"]+" "+data[i]["名称(英語)"]);
     html.append(hoge);
@@ -30,7 +32,7 @@ window.onload = function Createimg(){
         width: 180,
         height: 200,
         src: imgdata,
-        alt:  data[i]["名称"]
+        alt:  data[i]["名称"],
     });
     html.append(img);
     html.append("<br>");
@@ -44,8 +46,8 @@ window.onload = function Createimg(){
     localStorage.setItem("ido"+i,data[i]["緯度"]);
     localStorage.setItem("kei"+i,data[i]["経度"]);
 
-      html.append("</td>");
-
+    html.append("<hr>");
     }
+  // html.append("</tr>")
   });
 };
