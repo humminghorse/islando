@@ -33,7 +33,6 @@ window.onload = function Createimg(){
         alt:  data[i]["名称"]
     });
     html.append(img);
-    html.append("</td>");
     html.append("<br>");
 
       var ido = data[i]["緯度"];
@@ -44,6 +43,8 @@ window.onload = function Createimg(){
 
     localStorage.setItem("ido"+i,data[i]["緯度"]);
     localStorage.setItem("kei"+i,data[i]["経度"]);
+
+      html.append("</td>");
 
     }
   });
